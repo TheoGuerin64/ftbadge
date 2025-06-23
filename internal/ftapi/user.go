@@ -11,7 +11,6 @@ import (
 )
 
 const (
-	UserVersion  = 1
 	UserCacheTTL = 24 * time.Hour
 )
 
@@ -72,7 +71,7 @@ func GetUser(ctx context.Context, cs cache.CacheStore, login string) (*User, err
 }
 
 func GetOrCacheUser(ctx context.Context, cs cache.CacheStore, login string) (*User, error) {
-	cacheKey := fmt.Sprintf("user:%d:%s", UserVersion, login)
+	cacheKey := fmt.Sprintf("user:%s", login)
 
 	cachedValue, found, err := cs.Get(ctx, cacheKey)
 	if err != nil {

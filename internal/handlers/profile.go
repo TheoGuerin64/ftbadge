@@ -11,13 +11,15 @@ import (
 	"math"
 	"net/http"
 	"text/template"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
 const (
-	profileWidth  = 340
-	profileHeight = 140
+	profileWidth    = 340
+	profileHeight   = 140
+	profileCacheTTL = time.Hour
 )
 
 type Profile struct {
@@ -77,6 +79,29 @@ func renderProfile(ctx context.Context, cs cache.CacheStore, param profileParam)
 	return buf.Bytes(), nil
 }
 
+func getOrCacheProfile(ctx context.Context, cs cache.CacheStore, param profileParam) ([]byte, error) {
+	cacheKey := "profile:" + param.Login
+
+	cachedValue, found, err := cs.Get(ctx, cacheKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve profile from cache for login %q: %w", param.Login, err)
+	}
+	if found {
+		return []byte(cachedValue), nil
+	}
+
+	data, err := renderProfile(ctx, cs, param)
+	if err != nil {
+		return nil, fmt.Errorf("failed to render profile for login %q: %w", param.Login, err)
+	}
+
+	if err := cs.Set(ctx, cacheKey, string(data), profileCacheTTL); err != nil {
+		return nil, fmt.Errorf("failed to cache profile for login %q: %w", param.Login, err)
+	}
+
+	return data, nil
+}
+
 func ProfileHandler(ec echo.Context) error {
 	ctx := ftcontext.Convert(ec)
 
@@ -90,7 +115,7 @@ func ProfileHandler(ec echo.Context) error {
 		return err
 	}
 
-	data, err := renderProfile(ctx.Request().Context(), ctx.CacheStore, param)
+	data, err := getOrCacheProfile(ctx.Request().Context(), ctx.CacheStore, param)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to render profile").SetInternal(err)
 	}
