@@ -1,19 +1,41 @@
 package ftapi
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"fmt"
 	"ftbadge/internal/cache"
-	"io"
+	"image"
+	"image/draw"
+	"image/jpeg"
 	"net/http"
 	"time"
+
+	_ "image/gif"
+	_ "image/png"
 )
 
 const (
 	imageBase64CacheKeyPrefix = "image:base64:"
 	imageBase64CacheTTL       = 24 * time.Hour * 7
+	imageBase64JPEGQuality    = 70
 )
+
+func cropImageToSquare(img image.Image) image.Image {
+	bounds := img.Bounds()
+	width, height := bounds.Dx(), bounds.Dy()
+	size := min(width, height)
+
+	xOffset := (width - size) / 2
+	yOffset := (height - size) / 2
+	cropRect := image.Rect(xOffset, yOffset, xOffset+size, yOffset+size)
+
+	squareImg := image.NewRGBA(image.Rect(0, 0, size, size))
+	draw.Draw(squareImg, squareImg.Bounds(), img, cropRect.Min, draw.Src)
+
+	return squareImg
+}
 
 func FetchImageAsBase64(ctx context.Context, imageURL string) (string, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, imageURL, nil)
@@ -30,13 +52,20 @@ func FetchImageAsBase64(ctx context.Context, imageURL string) (string, error) {
 		return "", fmt.Errorf("failed to fetch image from URL %q: received unexpected status code %d (%s)", imageURL, resp.StatusCode, resp.Status)
 	}
 
-	imageBytes, err := io.ReadAll(resp.Body)
+	img, _, err := image.Decode(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("failed to read image data from response body for URL %q: %w", imageURL, err)
+		return "", fmt.Errorf("image decoding failed for URL %q: %w", imageURL, err)
 	}
 
-	encodedImage := base64.StdEncoding.EncodeToString(imageBytes)
-	return "data:image/png;base64," + encodedImage, nil
+	squareImg := cropImageToSquare(img)
+
+	buf := bytes.NewBuffer(nil)
+	if err := jpeg.Encode(buf, squareImg, &jpeg.Options{Quality: imageBase64JPEGQuality}); err != nil {
+		return "", fmt.Errorf("JPEG encoding failed for image from URL %q: %w", imageURL, err)
+	}
+
+	base64Data := base64.StdEncoding.EncodeToString(buf.Bytes())
+	return "data:image/jpg;base64," + base64Data, nil
 }
 
 func GetOrCacheImageBase64(ctx context.Context, cs cache.CacheStore, imageURL string) (string, error) {

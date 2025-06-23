@@ -35,7 +35,7 @@ type Profile struct {
 
 type profileParam struct {
 	Login string  `param:"login" validate:"required,alpha"`
-	Scale float64 `query:"scale" validate:"number,min=1,max=10"`
+	Scale float64 `query:"scale" validate:"number,min=1,max=2"`
 }
 
 func renderProfile(ctx context.Context, cs cache.CacheStore, param profileParam) ([]byte, error) {
