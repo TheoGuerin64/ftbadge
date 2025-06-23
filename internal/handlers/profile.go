@@ -98,7 +98,7 @@ func getOrCacheProfile(ctx context.Context, cs cache.CacheStore, login string) (
 
 func setClientCacheHeaders(ctx *ftcontext.Context, data []byte) error {
 	hash := md5.Sum([]byte(data))
-	etag := fmt.Sprintf("W/\"%x\"", hash)
+	etag := fmt.Sprintf("\"%x\"", hash)
 	clientETag := ctx.Request().Header.Get("If-None-Match")
 
 	ctx.Response().Header().Add("Cache-Control", "public, max-age=600, s-maxage=3600")
