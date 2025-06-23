@@ -1,6 +1,7 @@
 package ftapi
 
 import (
+	"compress/gzip"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -44,7 +45,8 @@ func GetUser(ctx context.Context, cs cache.CacheStore, login string) (*User, err
 	if err != nil {
 		return nil, fmt.Errorf("could not create user request: %w", err)
 	}
-	req.Header.Add("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Accept-Encoding", "gzip")
+	req.Header.Set("Authorization", "Bearer "+accessToken)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -55,8 +57,14 @@ func GetUser(ctx context.Context, cs cache.CacheStore, login string) (*User, err
 		return nil, fmt.Errorf("unexpected status code from user endpoint: %s", resp.Status)
 	}
 
+	gzipReader, err := gzip.NewReader(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create gzip reader for user %q response: %w", login, err)
+	}
+	defer gzipReader.Close()
+
 	var user User
-	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
+	if err := json.NewDecoder(gzipReader).Decode(&user); err != nil {
 		return nil, fmt.Errorf("failed to decode user response: %w", err)
 	}
 
