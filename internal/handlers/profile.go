@@ -17,8 +17,6 @@ import (
 )
 
 const (
-	profileWidth    = 340
-	profileHeight   = 140
 	profileCacheTTL = time.Hour
 )
 
@@ -31,23 +29,20 @@ type Profile struct {
 	Grade      string
 	Experience float64
 	Level      float64
-	Width      float64
-	Height     float64
 }
 
 type profileParam struct {
-	Login string  `param:"login" validate:"required,alpha"`
-	Scale float64 `query:"scale" validate:"number,min=1,max=2"`
+	Login string `param:"login" validate:"required,alpha"`
 }
 
-func renderProfile(ctx context.Context, cs cache.CacheStore, param profileParam) ([]byte, error) {
-	user, err := ftapi.GetOrCacheUser(ctx, cs, param.Login)
+func renderProfile(ctx context.Context, cs cache.CacheStore, login string) ([]byte, error) {
+	user, err := ftapi.GetOrCacheUser(ctx, cs, login)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user %q: %w", param.Login, err)
+		return nil, fmt.Errorf("failed to get user %q: %w", login, err)
 	}
 
 	if len(user.CursusUsers) == 0 {
-		return nil, fmt.Errorf("user %q has no cursus information", param.Login)
+		return nil, fmt.Errorf("user %q has no cursus information", login)
 	}
 	currentCursusUser := user.CursusUsers[len(user.CursusUsers)-1]
 	level, experience := math.Modf(currentCursusUser.Level)
@@ -66,8 +61,6 @@ func renderProfile(ctx context.Context, cs cache.CacheStore, param profileParam)
 		Grade:      currentCursusUser.Grade,
 		Level:      level,
 		Experience: experience,
-		Width:      profileWidth * param.Scale,
-		Height:     profileHeight * param.Scale,
 	}
 
 	tmpl := template.Must(template.New("profile").Parse(templates.Profile))
@@ -79,24 +72,24 @@ func renderProfile(ctx context.Context, cs cache.CacheStore, param profileParam)
 	return buf.Bytes(), nil
 }
 
-func getOrCacheProfile(ctx context.Context, cs cache.CacheStore, param profileParam) ([]byte, error) {
-	cacheKey := "profile:" + param.Login
+func getOrCacheProfile(ctx context.Context, cs cache.CacheStore, login string) ([]byte, error) {
+	cacheKey := "profile:" + login
 
 	cachedValue, found, err := cs.Get(ctx, cacheKey)
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve profile from cache for login %q: %w", param.Login, err)
+		return nil, fmt.Errorf("failed to retrieve profile from cache for login %q: %w", login, err)
 	}
 	if found {
 		return []byte(cachedValue), nil
 	}
 
-	data, err := renderProfile(ctx, cs, param)
+	data, err := renderProfile(ctx, cs, login)
 	if err != nil {
-		return nil, fmt.Errorf("failed to render profile for login %q: %w", param.Login, err)
+		return nil, fmt.Errorf("failed to render profile for login %q: %w", login, err)
 	}
 
 	if err := cs.Set(ctx, cacheKey, string(data), profileCacheTTL); err != nil {
-		return nil, fmt.Errorf("failed to cache profile for login %q: %w", param.Login, err)
+		return nil, fmt.Errorf("failed to cache profile for login %q: %w", login, err)
 	}
 
 	return data, nil
@@ -105,9 +98,7 @@ func getOrCacheProfile(ctx context.Context, cs cache.CacheStore, param profilePa
 func ProfileHandler(ec echo.Context) error {
 	ctx := ftcontext.Convert(ec)
 
-	param := profileParam{
-		Scale: 1,
-	}
+	param := profileParam{}
 	if err := ctx.Bind(&param); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid parameters").SetInternal(err)
 	}
@@ -115,7 +106,7 @@ func ProfileHandler(ec echo.Context) error {
 		return err
 	}
 
-	data, err := getOrCacheProfile(ctx.Request().Context(), ctx.CacheStore, param)
+	data, err := getOrCacheProfile(ctx.Request().Context(), ctx.CacheStore, param.Login)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to render profile").SetInternal(err)
 	}
