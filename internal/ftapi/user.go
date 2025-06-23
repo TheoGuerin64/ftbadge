@@ -12,7 +12,7 @@ import (
 
 const (
 	UserVersion  = 1
-	UserCacheTTL = time.Hour
+	UserCacheTTL = 24 * time.Hour
 )
 
 type User struct {

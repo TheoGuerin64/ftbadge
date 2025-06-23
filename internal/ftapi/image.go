@@ -12,7 +12,7 @@ import (
 
 const (
 	imageBase64CacheKeyPrefix = "image:base64:"
-	imageBase64CacheTTL       = 24 * time.Hour
+	imageBase64CacheTTL       = 24 * time.Hour * 7
 )
 
 func FetchImageAsBase64(ctx context.Context, imageURL string) (string, error) {
