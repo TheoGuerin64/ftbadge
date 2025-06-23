@@ -34,7 +34,7 @@ type User struct {
 }
 
 func GetUser(ctx context.Context, cs cache.CacheStore, login string) (*User, error) {
-	accessToken, err := getOrCacheAccessToken(ctx, cs)
+	accessToken, err := GetOrCacheAccessToken(ctx, cs)
 	if err != nil {
 		return nil, fmt.Errorf("could not get access token: %w", err)
 	}

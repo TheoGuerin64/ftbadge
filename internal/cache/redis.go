@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -11,8 +12,14 @@ type RedisStore struct {
 	client *redis.Client
 }
 
-func NewRedisStore(client *redis.Client) *RedisStore {
-	return &RedisStore{client: client}
+func NewRedisStore(redisURL string) (*RedisStore, error) {
+	opt, err := redis.ParseURL(redisURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse REDIS_URL %q: %w", redisURL, err)
+	}
+
+	client := redis.NewClient(opt)
+	return &RedisStore{client: client}, nil
 }
 
 func (r *RedisStore) Get(ctx context.Context, key string) (string, bool, error) {

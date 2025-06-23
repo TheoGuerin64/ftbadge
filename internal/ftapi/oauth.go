@@ -21,7 +21,7 @@ const (
 	oauthTokenEndpoint  = "https://api.intra.42.fr/oauth/token"
 )
 
-func fetchOAuthToken(ctx context.Context) (*oauthTokenResponse, error) {
+func FetchOAuthToken(ctx context.Context) (*oauthTokenResponse, error) {
 	clientID := utils.MustGetEnv("CLIENT_ID")
 	clientSecret := utils.MustGetEnv("CLIENT_SECRET")
 
@@ -53,25 +53,27 @@ func fetchOAuthToken(ctx context.Context) (*oauthTokenResponse, error) {
 	return &tokenResp, nil
 }
 
-func getOrCacheAccessToken(ctx context.Context, cs cache.CacheStore) (string, error) {
+func CacheAccessToken(ctx context.Context, cs cache.CacheStore) (string, error) {
+	tokenResp, err := FetchOAuthToken(ctx)
+	if err != nil {
+		return "", fmt.Errorf("could not obtain new OAuth token: %w", err)
+	}
+
+	ttl := time.Duration(tokenResp.ExpiresIn) * time.Second
+	if err := cs.Set(ctx, accessTokenCacheKey, tokenResp.AccessToken, ttl); err != nil {
+		return "", fmt.Errorf("failed to cache access token: %w", err)
+	}
+
+	return tokenResp.AccessToken, nil
+}
+
+func GetOrCacheAccessToken(ctx context.Context, cs cache.CacheStore) (string, error) {
 	cachedValue, found, err := cs.Get(ctx, accessTokenCacheKey)
 	if err != nil {
 		return "", fmt.Errorf("error retrieving OAuth token from cache: %w", err)
 	}
-
 	if !found {
-		tokenResp, err := fetchOAuthToken(ctx)
-		if err != nil {
-			return "", fmt.Errorf("could not obtain new OAuth token: %w", err)
-		}
-
-		ttl := time.Duration(tokenResp.ExpiresIn) * time.Second
-		if err := cs.Set(ctx, accessTokenCacheKey, tokenResp.AccessToken, ttl); err != nil {
-			return "", fmt.Errorf("failed to cache access token: %w", err)
-		}
-
-		return tokenResp.AccessToken, nil
+		return CacheAccessToken(ctx, cs)
 	}
-
 	return cachedValue, nil
 }

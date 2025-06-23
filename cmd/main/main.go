@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"ftbadge/internal/cache"
 	"ftbadge/internal/ftcontext"
 	"ftbadge/internal/ftvalidator"
@@ -11,29 +10,17 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/redis/go-redis/v9"
 )
 
 const (
 	defaultPort = "8080"
 )
 
-func setupRedisStore() (*cache.RedisStore, error) {
-	redisURL := utils.MustGetEnv("REDIS_URL")
-
-	opt, err := redis.ParseURL(redisURL)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse REDIS_URL %q: %w", redisURL, err)
-	}
-	client := redis.NewClient(opt)
-
-	return cache.NewRedisStore(client), nil
-}
-
 func main() {
 	port := utils.GetEnvWithDefault("PORT", defaultPort)
+	redisURL := utils.MustGetEnv("REDIS_URL")
 
-	redisStore, err := setupRedisStore()
+	redisStore, err := cache.NewRedisStore(redisURL)
 	if err != nil {
 		log.Fatalf("failed to setup Redis client: %v", err)
 	}
