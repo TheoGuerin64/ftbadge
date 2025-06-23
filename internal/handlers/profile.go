@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"crypto/md5"
 	"fmt"
 	"ftbadge/internal/cache"
 	"ftbadge/internal/ftapi"
@@ -95,6 +96,20 @@ func getOrCacheProfile(ctx context.Context, cs cache.CacheStore, login string) (
 	return data, nil
 }
 
+func setClientCacheHeaders(ctx *ftcontext.Context, data []byte) error {
+	hash := md5.Sum([]byte(data))
+	etag := fmt.Sprintf("W/\"%x\"", hash)
+	clientETag := ctx.Request().Header.Get("If-None-Match")
+
+	ctx.Response().Header().Add("Cache-Control", "public, max-age=600, s-maxage=3600")
+	ctx.Response().Header().Add("Etag", etag)
+	if clientETag == etag {
+		return ctx.NoContent(http.StatusNotModified)
+	}
+
+	return nil
+}
+
 func ProfileHandler(ec echo.Context) error {
 	ctx := ftcontext.Convert(ec)
 
@@ -110,9 +125,10 @@ func ProfileHandler(ec echo.Context) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to render profile").SetInternal(err)
 	}
-
 	ctx.Response().Header().Add("Content-Type", "image/svg+xml")
-	ctx.Response().Header().Add("Cache-Control", "public, max-age=600, s-maxage=3600")
 
+	if err := setClientCacheHeaders(ctx, data); err != nil {
+		return err
+	}
 	return ctx.XMLBlob(http.StatusOK, data)
 }
