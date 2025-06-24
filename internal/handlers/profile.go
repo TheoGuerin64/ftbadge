@@ -101,7 +101,7 @@ func setClientCacheHeaders(ctx *ftcontext.Context, data []byte) error {
 	etag := fmt.Sprintf("\"%x\"", hash)
 	clientETag := ctx.Request().Header.Get("If-None-Match")
 
-	ctx.Response().Header().Add("Cache-Control", "public, max-age=600, s-maxage=3600")
+	ctx.Response().Header().Add("Cache-Control", "public, max-age=3600, s-maxage=86400")
 	ctx.Response().Header().Add("Etag", etag)
 	if clientETag == etag {
 		return ctx.NoContent(http.StatusNotModified)
