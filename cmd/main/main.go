@@ -26,6 +26,7 @@ func main() {
 	}
 
 	e := echo.New()
+	e.HideBanner = true
 	e.Validator = ftvalidator.New()
 
 	e.Use(ftcontext.Middleware(redisStore))
