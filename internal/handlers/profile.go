@@ -41,6 +41,9 @@ func renderProfile(ctx context.Context, cs cache.CacheStore, login string) ([]by
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user %q: %w", login, err)
 	}
+	if user == nil {
+		return nil, nil
+	}
 
 	if len(user.CursusUsers) == 0 {
 		return nil, fmt.Errorf("user %q has no cursus information", login)
@@ -88,6 +91,9 @@ func getOrCacheProfile(ctx context.Context, cs cache.CacheStore, login string) (
 	if err != nil {
 		return nil, fmt.Errorf("failed to render profile for login %q: %w", login, err)
 	}
+	if data == nil {
+		return nil, nil
+	}
 
 	if err := cs.Set(ctx, cacheKey, string(data), profileCacheTTL); err != nil {
 		return nil, fmt.Errorf("failed to cache profile for login %q: %w", login, err)
@@ -124,6 +130,9 @@ func ProfileHandler(ec echo.Context) error {
 	data, err := getOrCacheProfile(ctx.Request().Context(), ctx.CacheStore, param.Login)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to render profile").SetInternal(err)
+	}
+	if data == nil {
+		return echo.NewHTTPError(http.StatusNotFound, fmt.Sprintf("User %q not found", param.Login))
 	}
 	ctx.Response().Header().Add("Content-Type", "image/svg+xml")
 

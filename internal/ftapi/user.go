@@ -52,6 +52,9 @@ func GetUser(ctx context.Context, cs cache.CacheStore, login string) (*User, err
 		return nil, fmt.Errorf("error sending user request: %w", err)
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, nil
+	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("unexpected status code from user endpoint: %s", resp.Status)
 	}
@@ -82,6 +85,9 @@ func GetOrCacheUser(ctx context.Context, cs cache.CacheStore, login string) (*Us
 		user, err := GetUser(ctx, cs, login)
 		if err != nil {
 			return nil, fmt.Errorf("could not fetch user from API: %w", err)
+		}
+		if user == nil {
+			return nil, nil
 		}
 
 		data, err := json.Marshal(user)
