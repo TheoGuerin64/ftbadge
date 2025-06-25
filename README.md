@@ -4,13 +4,15 @@ Generate a dynamic badge displaying a 42 profile summary from a GitHub login.
 
 ## Performance & Caching
 
-ftbadge is designed for speed and efficiency. It utilizes a robust, multi-layered caching strategy to ensure:
+ftbadge is designed for efficient delivery. While cold starts can introduce a slight delay on the first view due to the hosting environment, the badge is cached for 24 hours.
 
-- Blazing fast load times: Badges are delivered quickly, enhancing the user experience.
-- Reduced external API calls: Minimizes reliance on external services, improving reliability and responsiveness.
-- High availability: Cached content remains accessible even during potential upstream issues.
+Our multi-layered caching strategy ensures:
 
-This comprehensive caching approach ensures your badges are always displayed quickly and reliably.
+- Fast Load Times: Badges are delivered quickly for an enhanced user experience.
+- Reduced External API Calls: Minimizes reliance on external services, improving reliability.
+- High Availability: Cached content remains accessible even during potential upstream issues.
+
+This approach ensures your badges are displayed quickly and reliably.
 
 ## Usage
 
