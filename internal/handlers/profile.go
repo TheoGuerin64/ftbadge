@@ -33,7 +33,7 @@ type Profile struct {
 }
 
 type profileParam struct {
-	Login string `param:"login" validate:"required,alpha"`
+	Login string `param:"login" validate:"required,alpha,max=32"`
 }
 
 func renderProfile(ctx context.Context, cs cache.CacheStore, login string) ([]byte, error) {
@@ -125,6 +125,9 @@ func ProfileHandler(ec echo.Context) error {
 	}
 	if err := ctx.Validate(param); err != nil {
 		return err
+	}
+	if param.Login == "graph" {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid login: 'graph' is not allowed")
 	}
 
 	data, err := getOrCacheProfile(ctx.Request().Context(), ctx.CacheStore, param.Login)
