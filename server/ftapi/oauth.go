@@ -21,8 +21,8 @@ const (
 )
 
 var (
-	clientID     = utils.MustGetEnv("CLIENT_ID")
-	clientSecret = utils.MustGetEnv("CLIENT_SECRET")
+	clientID     = utils.MustGetEnv("FT_CLIENT_ID")
+	clientSecret = utils.MustGetEnv("FT_CLIENT_SECRET")
 )
 
 func (c *Client) GetAccessToken(ctx context.Context, cm *cache.CacheManager) (string, error) {
