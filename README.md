@@ -8,7 +8,7 @@ https://www.ftbadge.cc
 
 ## Live Exemple
 
-<a href="https://github.com/theoguerin64/ftbadge"><img src="https://api.ftbadge.cc/tguerin" width="425" height="175"></a>
+<a href="https://github.com/theoguerin64/ftbadge"><img src="https://ftbadge.cc/tguerin" width="425" height="175"></a>
 
 ## Contributing
 
