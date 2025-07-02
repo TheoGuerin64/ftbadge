@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Clipboard, ExternalLink, Zap } from "lucide-vue-next";
+import type { FunctionalComponent } from "vue";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
 interface CardProps {
   title: string;
   description: string;
-  icon: vue.FunctionalComponent;
+  icon: FunctionalComponent;
   iconColor: string;
 }
 
