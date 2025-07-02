@@ -142,6 +142,7 @@ func profileHandler(ctx echo.Context, cc cache.CacheClient) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to render profile").SetInternal(err)
 	}
 	ctx.Response().Header().Add("Content-Type", "image/svg+xml")
+	ctx.Response().Header().Add("Access-Control-Allow-Origin", "*")
 
 	if err := setCacheHeaders(ctx, data); err != nil {
 		return err
