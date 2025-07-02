@@ -36,7 +36,7 @@ watch(
     <CardHeader>
       <CardTitle class="flex items-center gap-2 text-white">
         <CodeXml :size="20" />
-        Implementation
+        Code Snippet
       </CardTitle>
       <CardDescription class="text-gray-400">
         Copy the code in your README or website
