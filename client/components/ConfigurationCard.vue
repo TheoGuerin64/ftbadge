@@ -25,7 +25,7 @@ const height = defineModel<number | undefined>("height");
     <CardHeader>
       <CardTitle class="flex items-center gap-2 text-white">
         <Settings :size="20" />
-        Badge Configuration
+        Configuration
       </CardTitle>
       <CardDescription class="text-gray-400">
         Configure your badge login and dimensions
