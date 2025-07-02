@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import BadgeConfiguration from "~/components/BadgeConfiguration.vue";
-import Footer from "~/components/Footer.vue";
-import Header from "~/components/Header.vue";
-import Implementation from "~/components/Implementation.vue";
-import InformationCards from "~/components/InformationCards.vue";
-import LivePreview from "~/components/LivePreview.vue";
+import ConfigurationCard from "~/components/ConfigurationCard.vue";
+import HomeFooter from "~/components/HomeFooter.vue";
+import HomeHeader from "~/components/HomeHeader.vue";
+import InformationCard from "~/components/InformationCard.vue";
+import PreviewCard from "~/components/PreviewCard.vue";
+import SnippetCard from "~/components/SnippetCard.vue";
 
 const login = ref<string>("tguerin");
 const width = ref<number | undefined>();
@@ -18,7 +18,7 @@ const apiURL = computed<string>(() => {
 
 <template>
   <div class="bg-gray-950">
-    <Header />
+    <HomeHeader />
 
     <main class="mx-auto max-w-6xl px-4 py-8">
       <div class="mb-12 text-center">
@@ -34,7 +34,7 @@ const apiURL = computed<string>(() => {
 
       <div class="grid gap-6 lg:grid-cols-2">
         <div>
-          <BadgeConfiguration
+          <ConfigurationCard
             v-model:login="login"
             v-model:width="width"
             v-model:height="height"
@@ -43,8 +43,8 @@ const apiURL = computed<string>(() => {
         </div>
 
         <div class="space-y-6">
-          <LivePreview :api-url="apiURL" :width="width" :height="height" />
-          <Implementation :api-url="apiURL" :width="width" :height="height" />
+          <PreviewCard :api-url="apiURL" :width="width" :height="height" />
+          <SnippetCard :api-url="apiURL" :width="width" :height="height" />
         </div>
       </div>
 
@@ -52,10 +52,10 @@ const apiURL = computed<string>(() => {
         <h3 class="mb-8 text-center text-2xl font-bold text-white">
           Why Choose ftbadge?
         </h3>
-        <InformationCards />
+        <InformationCard />
       </div>
     </main>
 
-    <Footer />
+    <HomeFooter />
   </div>
 </template>

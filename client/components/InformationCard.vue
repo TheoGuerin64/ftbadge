@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 interface CardProps {
   title: string;
   description: string;
-  icon: any;
+  icon: vue.FunctionalComponent;
   iconColor: string;
 }
 
@@ -33,7 +33,11 @@ const cards: CardProps[] = [
 
 <template>
   <div class="grid gap-6 md:grid-cols-3">
-    <Card v-for="card in cards" class="border-gray-800 bg-gray-900">
+    <Card
+      v-for="card in cards"
+      :key="card.title"
+      class="border-gray-800 bg-gray-900"
+    >
       <CardHeader>
         <CardTitle class="flex items-center gap-2 text-white">
           <component :is="card.icon" :size="20" :class="card.iconColor" />
