@@ -45,7 +45,7 @@ const debouncedApiURL = debouncedRef(apiURL, 300);
         class="flex justify-center rounded-lg border border-gray-700 bg-gray-800 p-4 text-white"
       >
         <a
-          href="https://github.com/TheoGuerin64/ftbadge"
+          href="https://ftbadge.cc"
           target="_blank"
           v-show="imageState == ImageState.LOADED"
         >

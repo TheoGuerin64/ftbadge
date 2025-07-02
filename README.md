@@ -4,11 +4,11 @@ Dynamic 42 Profile Badge.
 
 ## Usage
 
-https://www.ftbadge.cc
+https://ftbadge.cc
 
 ## Live Exemple
 
-<a href="https://github.com/theoguerin64/ftbadge"><img src="https://ftbadge.cc/tguerin" width="425" height="175"></a>
+<a href="https://ftbadge.cc"><img src="https://ftbadge.cc/tguerin" width="425" height="175"></a>
 
 ## Contributing
 
