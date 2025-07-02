@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { CodeXml } from "lucide-vue-next";
-import { computed } from "vue";
-import CopyButton from "~/components/CopyButton.vue";
+import { ref, watch } from "vue";
+import HtmlTab from "~/components/HtmlTab.vue";
+import MarkdownTab from "~/components/MarkdownTab.vue";
 import {
   Card,
   CardContent,
@@ -9,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 const props = defineProps<{
   apiUrl: string;
@@ -16,16 +18,17 @@ const props = defineProps<{
   height?: number;
 }>();
 
-const htmlCode = computed<string>(() => {
-  let attributes = `src="${props.apiUrl}"`;
-  if (props.width) {
-    attributes += ` width="${props.width}"`;
-  }
-  if (props.height) {
-    attributes += ` height="${props.height}"`;
-  }
-  return `<a href="https://ftbadge.cc"><img ${attributes}></a>`;
-});
+const selectedTab = ref("html");
+
+watch(
+  () => [props.width, props.height],
+  ([width, height]) => {
+    if ((width || height) && selectedTab.value === "markdown") {
+      selectedTab.value = "html";
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -40,10 +43,36 @@ const htmlCode = computed<string>(() => {
       </CardDescription>
     </CardHeader>
     <CardContent>
-      <div class="rounded-md border border-gray-700 bg-gray-800 p-4">
-        <code class="text-sm break-all text-orange-400">{{ htmlCode }}</code>
-      </div>
-      <CopyButton label="HTML" :copyText="htmlCode" class="mt-3" />
+      <Tabs defaultValue="html" class="w-full" v-model="selectedTab">
+        <TabsList class="grid w-full grid-cols-2 bg-gray-800">
+          <TabsTrigger
+            value="markdown"
+            class="data-[state=active]:bg-gray-700"
+            :disabled="!!props.width || !!props.height"
+          >
+            Markdown
+          </TabsTrigger>
+          <TabsTrigger value="html" class="data-[state=active]:bg-gray-700">
+            HTML
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent
+          value="markdown"
+          class="space-y-3"
+          :disabled="!!props.width || !!props.height"
+        >
+          <MarkdownTab :apiUrl="props.apiUrl" />
+        </TabsContent>
+
+        <TabsContent value="html" class="space-y-3">
+          <HtmlTab
+            :apiUrl="props.apiUrl"
+            :width="props.width"
+            :height="props.height"
+          />
+        </TabsContent>
+      </Tabs>
     </CardContent>
   </Card>
 </template>
