@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Settings } from "lucide-vue-next";
+import { computed } from "vue";
 import CopyButton from "~/components/CopyButton.vue";
 import {
   Card,
@@ -10,14 +11,18 @@ import {
 } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { isAlphanum } from "~/lib/utils";
 
 const props = defineProps<{
-  apiURL: string;
+  apiUrl: string;
 }>();
 
 const login = defineModel<string>("login");
 const width = defineModel<number | undefined>("width");
 const height = defineModel<number | undefined>("height");
+
+const loginEmpty = computed(() => !login.value || !login.value.trim());
+const loginAlphanum = computed(() => !login.value || isAlphanum(login.value));
 </script>
 
 <template>
@@ -38,10 +43,16 @@ const height = defineModel<number | undefined>("height");
           id="login"
           v-model="login"
           type="text"
+          maxlength="32"
           required
           placeholder="Enter your login"
           class="border-gray-700 bg-gray-800 text-white placeholder-gray-400"
+          :aria-invalid="loginEmpty || !loginAlphanum"
         />
+        <p v-if="loginEmpty" class="text-sm text-red-400">Login is required</p>
+        <p v-if="!loginAlphanum" class="text-sm text-red-400">
+          Login must be alphanumeric (letters and numbers only)
+        </p>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
@@ -82,10 +93,10 @@ const height = defineModel<number | undefined>("height");
         <Label class="text-sm text-gray-200">API URL</Label>
         <div class="mt-2 rounded-md border border-gray-700 bg-gray-800 p-3">
           <code class="text-sm break-all text-green-400">{{
-            props.apiURL
+            props.apiUrl
           }}</code>
         </div>
-        <CopyButton label="URL" :copyText="props.apiURL" class="mt-3" />
+        <CopyButton label="URL" :copyText="props.apiUrl" class="mt-3" />
       </div>
     </CardContent>
   </Card>
