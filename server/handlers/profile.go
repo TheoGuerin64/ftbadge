@@ -36,7 +36,7 @@ type Profile struct {
 }
 
 type profileParam struct {
-	Login string `param:"login" validate:"required,alpha,max=32"`
+	Login string `param:"login" validate:"required,alphanum,max=32"`
 }
 
 const (

@@ -18,8 +18,8 @@ func fieldErrorMessage(fieldError validator.FieldError) string {
 	switch fieldError.Tag() {
 	case "required":
 		return fmt.Sprintf("%s is required", field)
-	case "alpha":
-		return fmt.Sprintf("%s must contain only letters", field)
+	case "alphanum":
+		return fmt.Sprintf("%s must contain only letters and numbers", field)
 	case "max":
 		return fmt.Sprintf("%s cannot be longer than %s characters", field, fieldError.Param())
 	default:
