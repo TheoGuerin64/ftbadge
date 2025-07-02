@@ -24,7 +24,7 @@ const htmlCode = computed<string>(() => {
   if (props.height !== undefined) {
     attributes += ` height="${props.height}"`;
   }
-  return `<a href="https://github.com/theoguerin64/ftbadge"><img ${attributes}></a>`;
+  return `<a href="https://ftbadge.cc"><img ${attributes}></a>`;
 });
 </script>
 
