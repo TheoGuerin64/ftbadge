@@ -9,18 +9,20 @@ import (
 type CacheManager struct {
 	id      string
 	client  CacheClient
-	data    map[string]string
+	data    map[CacheKey]string
 	pending []CacheEntry
 }
 
+type CacheKey int
+
 const (
-	CacheKeyAccessToken = "access-token"
-	CacheKeyProfile     = "profile"
-	CacheKeyUser        = "user"
-	CacheKeyAvatar      = "avatar"
+	CacheKeyAccessToken CacheKey = iota
+	CacheKeyProfile
+	CacheKeyUser
+	CacheKeyAvatar
 )
 
-var CacheKeys = []string{
+var CacheKeys = []CacheKey{
 	CacheKeyAccessToken,
 	CacheKeyProfile,
 	CacheKeyUser,
@@ -34,7 +36,7 @@ const (
 	CacheKeyGroupData
 )
 
-var preFetchGroups = map[CacheGroup][]string{
+var preFetchGroups = map[CacheGroup][]CacheKey{
 	CacheKeyGroupProfile: {CacheKeyProfile},
 	CacheKeyGroupData:    {CacheKeyAccessToken, CacheKeyUser, CacheKeyAvatar},
 }
@@ -44,21 +46,21 @@ func generateProfileKey(id string) string     { return "profile:" + id }
 func generateUserKey(id string) string        { return "user:" + id }
 func generateAvatarKey(id string) string      { return "avatar:" + id }
 
-var cacheKeyGenerators = map[string]func(id string) string{
+var cacheKeyGenerators = map[CacheKey]func(id string) string{
 	CacheKeyAccessToken: generateAccessTokenKey,
 	CacheKeyProfile:     generateProfileKey,
 	CacheKeyUser:        generateUserKey,
 	CacheKeyAvatar:      generateAvatarKey,
 }
 
-var cacheKeyTTL = map[string]time.Duration{
+var cacheKeyTTL = map[CacheKey]time.Duration{
 	CacheKeyProfile: 1 * time.Hour,
 	CacheKeyUser:    24 * time.Hour,
 	CacheKeyAvatar:  7 * 24 * time.Hour,
 }
 
 func NewCacheManager(ctx context.Context, client CacheClient, id string) (*CacheManager, error) {
-	data := make(map[string]string, len(CacheKeys))
+	data := make(map[CacheKey]string, len(CacheKeys))
 	var pending []CacheEntry = nil
 
 	return &CacheManager{id, client, data, pending}, nil
@@ -74,7 +76,7 @@ func (cm *CacheManager) PreFetch(ctx context.Context, group CacheGroup) error {
 	for _, key := range keys {
 		generator, exists := cacheKeyGenerators[key]
 		if !exists {
-			panic(fmt.Sprintf("cache key '%s' does not have a corresponding generator function", key))
+			panic(fmt.Sprintf("cache key %q does not have a corresponding generator function", key))
 		}
 		cacheKeys = append(cacheKeys, generator(cm.id))
 	}
@@ -103,28 +105,28 @@ func (cm *CacheManager) PreFetch(ctx context.Context, group CacheGroup) error {
 	return nil
 }
 
-func (cm *CacheManager) Get(cacheKey string) (string, bool) {
+func (cm *CacheManager) Get(cacheKey CacheKey) (string, bool) {
 	value, exists := cm.data[cacheKey]
 	return value, exists
 }
 
-func (cm *CacheManager) Set(cacheKey string, value string) {
+func (cm *CacheManager) Set(cacheKey CacheKey, value string) {
 	ttl, exists := cacheKeyTTL[cacheKey]
 	if !exists {
-		panic(fmt.Sprintf("cache key '%s' does not have a default TTL", cacheKey))
+		panic(fmt.Sprintf("cache key %q does not have a default TTL", cacheKey))
 	}
 
 	cm.SetWithTTL(cacheKey, value, ttl)
 }
 
-func (cm *CacheManager) SetWithTTL(cacheKey string, value string, ttl time.Duration) {
+func (cm *CacheManager) SetWithTTL(cacheKey CacheKey, value string, ttl time.Duration) {
 	if cm.pending == nil {
 		cm.pending = make([]CacheEntry, len(CacheKeys))
 	}
 
 	generator, exists := cacheKeyGenerators[cacheKey]
 	if !exists {
-		panic(fmt.Sprintf("cache key '%s' does not have a corresponding generator function", cacheKey))
+		panic(fmt.Sprintf("cache key %q does not have a corresponding generator function", cacheKey))
 	}
 	key := generator(cm.id)
 
