@@ -11,7 +11,7 @@ const login = ref<string>("tguerin");
 const width = ref<number | undefined>();
 const height = ref<number | undefined>();
 
-const apiURL = computed<string>(() => {
+const apiUrl = computed<string>(() => {
   return window.location.href + login.value;
 });
 </script>
@@ -38,13 +38,13 @@ const apiURL = computed<string>(() => {
             v-model:login="login"
             v-model:width="width"
             v-model:height="height"
-            :apiURL="apiURL"
+            :apiUrl="apiUrl"
           />
         </div>
 
         <div class="space-y-6">
-          <PreviewCard :api-url="apiURL" :width="width" :height="height" />
-          <SnippetCard :api-url="apiURL" :width="width" :height="height" />
+          <PreviewCard :api-url="apiUrl" :width="width" :height="height" />
+          <SnippetCard :api-url="apiUrl" :width="width" :height="height" />
         </div>
       </div>
 
