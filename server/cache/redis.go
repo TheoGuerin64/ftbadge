@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"ftbadge/server/utils"
-	"time"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -28,9 +27,7 @@ func NewRedisClient() (*RedisClient, error) {
 }
 
 func (rc *RedisClient) Get(ctx context.Context, key string) (string, bool, error) {
-	t := time.Now()
 	value, err := rc.client.Get(ctx, key).Result()
-	fmt.Printf("Get took %s for key %q\n", time.Since(t), key)
 	if err == redis.Nil {
 		return "", false, nil
 	} else if err != nil {
