@@ -18,10 +18,10 @@ const props = defineProps<{
 
 const htmlCode = computed<string>(() => {
   let attributes = `src="${props.apiUrl}"`;
-  if (props.width !== undefined) {
+  if (props.width) {
     attributes += ` width="${props.width}"`;
   }
-  if (props.height !== undefined) {
+  if (props.height) {
     attributes += ` height="${props.height}"`;
   }
   return `<a href="https://ftbadge.cc"><img ${attributes}></a>`;
