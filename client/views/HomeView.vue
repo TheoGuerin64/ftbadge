@@ -12,7 +12,7 @@ const width = ref<number | undefined>();
 const height = ref<number | undefined>();
 
 const apiUrl = computed<string>(() => {
-  return window.location.href + login.value;
+  return window.location.href + login.value.trim();
 });
 </script>
 

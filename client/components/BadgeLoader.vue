@@ -26,6 +26,12 @@ watch(
     state.value = State.LOADING;
     error.value = null;
 
+    if (apiUrl == window.location.href) {
+      state.value = State.ERROR;
+      error.value = "Please provide a valid login";
+      return;
+    }
+
     const response = await fetch(apiUrl);
     if (!response.ok) {
       const data = await response.json();
