@@ -7,7 +7,7 @@ const props = defineProps<{
 }>();
 
 const code = computed<string>(() => {
-  return `[![ftbadge](${props.apiUrl})](https://ftbadge.cc)`;
+  return `[![ftbadge](${props.apiUrl})](https://ftbadge.vercel.app)`;
 });
 </script>
 

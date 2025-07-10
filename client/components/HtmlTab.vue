@@ -16,7 +16,7 @@ const code = computed<string>(() => {
   if (props.height) {
     attributes += ` height="${props.height}"`;
   }
-  return `<a href="https://ftbadge.cc"><img ${attributes}></a>`;
+  return `<a href="https://ftbadge.vercel.app"><img ${attributes}></a>`;
 });
 </script>
 
