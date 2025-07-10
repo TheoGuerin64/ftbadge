@@ -52,7 +52,7 @@ watch(
 <template>
   <div class="flex justify-center">
     <a
-      href="https://ftbadge.cc"
+      href="https://ftbadge.vercel.app"
       target="_blank"
       v-show="state === State.LOADED"
     >
