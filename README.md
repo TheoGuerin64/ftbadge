@@ -4,11 +4,11 @@ Dynamic 42 Profile Badge.
 
 ## Usage
 
-https://ftbadge.vercel.app
+https://ftbadge.cc
 
 ## Live Exemple
 
-<a href="https://ftbadge.vercel.app"><img src="https://ftbadge.vercel.app/tguerin" width="425" height="175"></a>
+<a href="https://ftbadge.cc"><img src="https://ftbadge.cc/tguerin" width="425" height="175"></a>
 
 ## Contributing
 
