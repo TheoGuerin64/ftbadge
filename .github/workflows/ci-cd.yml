@@ -41,6 +41,8 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    env:
+      GO111MODULE: on
     steps:
       - uses: actions/checkout@v5
         with:
@@ -55,8 +57,6 @@ jobs:
         uses: securego/gosec@master
         with:
           args: ./...
-        env:
-          GO111MODULE: on
 
   backend-deploy:
     needs: [backend-tests, backend-security-scan]
