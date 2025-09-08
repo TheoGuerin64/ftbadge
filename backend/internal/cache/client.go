@@ -26,11 +26,8 @@ type RedisClient struct {
 	client *redis.Client
 }
 
-var (
-	redisURL = utils.MustGetEnv("REDIS_URL")
-)
-
 func NewRedisClient() (*RedisClient, error) {
+	redisURL := utils.MustGetEnv("REDIS_URL")
 	options, err := redis.ParseURL(redisURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse url %q: %w", redisURL, err)
