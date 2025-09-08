@@ -21,15 +21,13 @@ const (
 	grantType = "client_credentials"
 )
 
-var (
-	clientID     = utils.MustGetEnv("FT_CLIENT_ID")
-	clientSecret = utils.MustGetEnv("FT_CLIENT_SECRET")
-)
-
 func (c *Client) GetAccessToken(ctx context.Context, cm *cache.CacheManager) (string, error) {
 	if cachedValue, isCached := cm.Get(cache.CacheKeyAccessToken); isCached {
 		return cachedValue, nil
 	}
+
+	clientID := utils.MustGetEnv("FT_CLIENT_ID")
+	clientSecret := utils.MustGetEnv("FT_CLIENT_SECRET")
 
 	data := url.Values{}
 	data.Set("grant_type", grantType)
