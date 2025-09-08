@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	"crypto/md5"
+	"crypto/md5" // #nosec G501 -- only used for ETag generation
 	"fmt"
 	"math"
 	"net/http"
@@ -111,7 +111,7 @@ func renderProfile(ctx context.Context, ftc *ftapi.Client, cc cache.CacheClient,
 }
 
 func setCacheHeaders(ctx echo.Context, data []byte) error {
-	hash := md5.Sum([]byte(data))
+	hash := md5.Sum([]byte(data)) // #nosec G401 -- ETag does not need to be cryptographically secure
 	etag := fmt.Sprintf("\"%x\"", hash)
 	clientETag := ctx.Request().Header.Get("If-None-Match")
 
