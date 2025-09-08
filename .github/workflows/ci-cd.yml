@@ -54,9 +54,6 @@ jobs:
       - name: Install dependencies
         run: |
           go mod tidy
-
-      - name: Install gosec
-        run: |
           go install github.com/securego/gosec/v2/cmd/gosec@latest
 
       - name: Run gosec
@@ -69,9 +66,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    defaults:
-      run:
-        working-directory: backend
     steps:
       - uses: actions/checkout@v5
         with:
@@ -94,5 +88,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
+          context: "{{defaultContext}}:backend"
           push: true
           tags: ghcr.io/${{ env.GITHUB_REPOSITORY_LOWERCASE }}:latest
