@@ -46,6 +46,15 @@ jobs:
         with:
           sparse-checkout: backend
 
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Install dependencies
+        run: |
+          go mod tidy
+
       - name: Run Gosec Security Scanner
         uses: securego/gosec@master
         with:
