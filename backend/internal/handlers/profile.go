@@ -9,12 +9,12 @@ import (
 	"net/url"
 	"text/template"
 
+	"github.com/labstack/echo/v4"
+
 	"ftbadge/internal/cache"
 	"ftbadge/internal/ftapi"
 	"ftbadge/internal/templates"
 	"ftbadge/internal/utils"
-
-	"github.com/labstack/echo/v4"
 )
 
 type UserNotFoundError struct {
