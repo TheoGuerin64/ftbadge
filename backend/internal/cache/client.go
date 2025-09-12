@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"ftbadge/internal/utils"
-
 	"github.com/redis/go-redis/v9"
+
+	"ftbadge/internal/utils"
 )
 
 type CacheEntry struct {

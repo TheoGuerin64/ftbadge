@@ -3,12 +3,12 @@ package main
 import (
 	"log"
 
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+
 	"ftbadge/internal/cache"
 	"ftbadge/internal/ftvalidator"
 	"ftbadge/internal/handlers"
-
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
