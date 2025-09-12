@@ -24,7 +24,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Gzip())
 
-	e.GET("/:login", handlers.GetProfileHandler(redisClient))
+	e.GET("/profile/:login", handlers.GetProfileHandler(redisClient))
 
 	e.Logger.Fatal(e.Start(":3000"))
 }
