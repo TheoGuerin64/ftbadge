@@ -14,7 +14,7 @@ const width = ref<number | undefined>();
 const height = ref<number | undefined>();
 
 const apiUrl = computed<string>(() => {
-  return env.VITE_API_URL + login.value.trim();
+  return `${env.VITE_API_URL}/profile/${login.value.trim()}`;
 });
 </script>
 
