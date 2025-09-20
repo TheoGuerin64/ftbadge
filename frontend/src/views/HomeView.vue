@@ -8,7 +8,7 @@ import PreviewCard from "~/components/PreviewCard.vue";
 import SnippetCard from "~/components/SnippetCard.vue";
 import { env } from "~/lib/env";
 
-const login = ref<string>("tguerin");
+const login = ref<string>("test");
 const width = ref<number | undefined>();
 const height = ref<number | undefined>();
 
