@@ -51,6 +51,7 @@ var (
 
 func createProfile(user *ftapi.User, avatar string) *Profile {
 	level, experience := math.Modf(user.Level)
+	experience = max(experience, 0.001) // Ensure experience is never zero to avoid rendering issues
 
 	return &Profile{
 		Avatar:     avatar,
