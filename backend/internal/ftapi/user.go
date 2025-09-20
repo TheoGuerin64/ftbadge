@@ -40,16 +40,25 @@ type User struct {
 }
 
 func createUser(userResp *userReponse) *User {
-	cursus := userResp.CursusUsers[len(userResp.CursusUsers)-1]
+	grade := "N/A"
+	level := 0.0
+	cursusName := "N/A"
+
+	if len(userResp.CursusUsers) > 0 {
+		cursus := userResp.CursusUsers[len(userResp.CursusUsers)-1]
+		grade = cursus.Grade
+		level = cursus.Level
+		cursusName = cursus.Cursus.Name
+	}
 
 	return &User{
 		Email:     userResp.Email,
 		Name:      userResp.Displayname,
 		Role:      userResp.Kind,
 		AvatarURL: userResp.Image.Versions.Medium,
-		Grade:     cursus.Grade,
-		Level:     cursus.Level,
-		Cursus:    cursus.Cursus.Name,
+		Grade:     grade,
+		Level:     level,
+		Cursus:    cursusName,
 	}
 }
 
