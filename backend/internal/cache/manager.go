@@ -18,14 +18,12 @@ type CacheKey int
 const (
 	CacheKeyAccessToken CacheKey = iota
 	CacheKeyProfile
-	CacheKeyUser
 	CacheKeyAvatar
 )
 
 var CacheKeys = []CacheKey{
 	CacheKeyAccessToken,
 	CacheKeyProfile,
-	CacheKeyUser,
 	CacheKeyAvatar,
 }
 
@@ -38,24 +36,21 @@ const (
 
 var preFetchGroups = map[CacheGroup][]CacheKey{
 	CacheGroupProfile: {CacheKeyProfile},
-	CacheGroupData:    {CacheKeyAccessToken, CacheKeyUser, CacheKeyAvatar},
+	CacheGroupData:    {CacheKeyAccessToken, CacheKeyAvatar},
 }
 
 func generateAccessTokenKey(id string) string { return "access-token" }
 func generateProfileKey(id string) string     { return "profile:" + id }
-func generateUserKey(id string) string        { return "user:" + id }
 func generateAvatarKey(id string) string      { return "avatar:" + id }
 
 var cacheKeyGenerators = map[CacheKey]func(id string) string{
 	CacheKeyAccessToken: generateAccessTokenKey,
 	CacheKeyProfile:     generateProfileKey,
-	CacheKeyUser:        generateUserKey,
 	CacheKeyAvatar:      generateAvatarKey,
 }
 
 var cacheKeyTTL = map[CacheKey]time.Duration{
-	CacheKeyProfile: 1 * time.Hour,
-	CacheKeyUser:    24 * time.Hour,
+	CacheKeyProfile: 24 * time.Hour,
 	CacheKeyAvatar:  7 * 24 * time.Hour,
 }
 

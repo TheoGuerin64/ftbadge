@@ -63,14 +63,6 @@ func createUser(userResp *userReponse) *User {
 }
 
 func (c *Client) GetUser(ctx context.Context, cm *cache.CacheManager, login string) (*User, error) {
-	if cachedValue, isCached := cm.Get(cache.CacheKeyUser); isCached {
-		var user User
-		if err := json.Unmarshal([]byte(cachedValue), &user); err != nil {
-			return nil, fmt.Errorf("failed to unmarshal cached user: %w", err)
-		}
-		return &user, nil
-	}
-
 	accessToken, err := c.GetAccessToken(ctx, cm)
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve access token: %w", err)
@@ -113,12 +105,6 @@ func (c *Client) GetUser(ctx context.Context, cm *cache.CacheManager, login stri
 		return nil, fmt.Errorf("failed to unmarshal cached user: %w", err)
 	}
 	user := createUser(&userResp)
-
-	cacheData, err := json.Marshal(user)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal user for caching: %w", err)
-	}
-	cm.Set(cache.CacheKeyUser, string(cacheData))
 
 	return user, nil
 }
