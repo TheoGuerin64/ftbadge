@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/redis/go-redis/v9/maintnotifications"
 
 	"ftbadge/internal/utils"
 )
@@ -31,6 +32,9 @@ func NewRedisClient() (*RedisClient, error) {
 	options, err := redis.ParseURL(redisURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse url %q: %w", redisURL, err)
+	}
+	options.MaintNotificationsConfig = &maintnotifications.Config{
+		Mode: maintnotifications.ModeDisabled,
 	}
 
 	client := redis.NewClient(options)
