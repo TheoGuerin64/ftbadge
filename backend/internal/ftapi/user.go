@@ -11,7 +11,7 @@ import (
 	"ftbadge/internal/utils"
 )
 
-type userReponse struct {
+type userResponse struct {
 	Email       string `json:"email"`
 	Displayname string `json:"displayname"`
 	Kind        string `json:"kind"`
@@ -39,7 +39,7 @@ type User struct {
 	Cursus    string
 }
 
-func createUser(userResp *userReponse) *User {
+func createUser(userResp *userResponse) *User {
 	grade := "N/A"
 	level := 0.0
 	cursusName := "N/A"
@@ -100,7 +100,7 @@ func (c *Client) GetUser(ctx context.Context, cm *cache.CacheManager, login stri
 		data = bytes
 	}
 
-	var userResp userReponse
+	var userResp userResponse
 	if err := json.Unmarshal([]byte(data), &userResp); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal cached user: %w", err)
 	}
