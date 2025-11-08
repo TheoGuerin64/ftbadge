@@ -18,6 +18,7 @@ func main() {
 	}
 
 	e := echo.New()
+	e.HideBanner = true
 	e.Validator = ftvalidator.New()
 
 	e.Use(middleware.Recover())
