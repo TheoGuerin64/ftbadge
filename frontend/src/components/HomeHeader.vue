@@ -17,7 +17,7 @@ import { Button } from "~/components/ui/button";
         />
         <div>
           <h1
-            class="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-2xl font-bold text-transparent"
+            class="bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-2xl font-bold text-transparent"
           >
             ftbadge
           </h1>

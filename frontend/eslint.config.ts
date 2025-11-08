@@ -9,12 +9,12 @@ import { globalIgnores } from "eslint/config";
 export default defineConfigWithVueTs(
   {
     name: "app/files-to-lint",
-    files: ["**/*.{ts,mts,tsx,vue}"],
+    files: ["**/*.{ts,vue}"],
   },
 
-  globalIgnores(["**/dist/**", "**/dist-ssr/**", "**/coverage/**"]),
+  globalIgnores(["**/dist/**"]),
 
   pluginVue.configs["flat/essential"],
   vueTsConfigs.recommended,
-  skipFormatting
+  skipFormatting,
 );
