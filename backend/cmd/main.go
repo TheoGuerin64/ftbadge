@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	redisClient, err := cache.NewRedisClient()
+	localClient, err := cache.NewLocalClient()
 	if err != nil {
 		log.Fatalf("failed to setup Redis client: %v", err)
 	}
@@ -25,7 +25,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Gzip())
 
-	e.GET("/profile/:login", handlers.GetProfileHandler(redisClient))
+	e.GET("/profile/:login", handlers.GetProfileHandler(localClient))
 
 	e.Logger.Fatal(e.Start(":3000"))
 }
