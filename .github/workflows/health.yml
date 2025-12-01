@@ -1,11 +1,11 @@
-name: CI
+name: Health Check
 
 on:
   schedule:
     - cron: '0 6,12 * * *'
 
 jobs:
-  backend-security-scan:
+  health-check:
     runs-on: ubuntu-latest
     steps:
       - name: Check profile tguerin
