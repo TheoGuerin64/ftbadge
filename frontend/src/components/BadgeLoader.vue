@@ -32,7 +32,7 @@ watch(
       return;
     }
 
-    const response = await fetch(apiUrl);
+    const response = await fetch(apiUrl, { priority: "high" });
     if (!response.ok) {
       const data = await response.json();
       error.value = data.message || "An error occurred";
