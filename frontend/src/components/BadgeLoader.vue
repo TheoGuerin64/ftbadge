@@ -56,7 +56,7 @@ watch(
       target="_blank"
       v-show="state === State.LOADED"
     >
-      <img ref="imageRef" />
+      <img ref="imageRef" alt="generated-badge" />
     </a>
     <Loader2 v-if="state === State.LOADING" :size="20" class="animate-spin" />
     <div v-else-if="state === State.ERROR" class="flex items-center gap-2">
