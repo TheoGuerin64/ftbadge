@@ -60,7 +60,7 @@ const loginAlphanum = computed(() => !login.value || isAlphanum(login.value));
         <div class="space-y-2">
           <Label htmlFor="width" class="text-gray-200">
             Width (px)
-            <span class="text-xs text-gray-500">(optional)</span>
+            <span class="text-xs text-gray-400">(optional)</span>
           </Label>
           <Input
             id="width"
@@ -76,7 +76,7 @@ const loginAlphanum = computed(() => !login.value || isAlphanum(login.value));
         <div class="space-y-2">
           <Label htmlFor="height" class="text-gray-200">
             Height (px)
-            <span class="text-xs text-gray-500">(optional)</span>
+            <span class="text-xs text-gray-400">(optional)</span>
           </Label>
           <Input
             id="height"

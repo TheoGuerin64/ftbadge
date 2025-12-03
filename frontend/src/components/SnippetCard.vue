@@ -48,12 +48,15 @@ watch(
         <TabsList class="grid w-full grid-cols-2 bg-gray-800">
           <TabsTrigger
             value="markdown"
-            class="data-[state=active]:bg-gray-700"
+            class="text-gray-400 data-[state=active]:bg-gray-700"
             :disabled="!!props.width || !!props.height"
           >
             Markdown
           </TabsTrigger>
-          <TabsTrigger value="html" class="data-[state=active]:bg-gray-700">
+          <TabsTrigger
+            value="html"
+            class="text-gray-400 data-[state=active]:bg-gray-700"
+          >
             HTML
           </TabsTrigger>
         </TabsList>
