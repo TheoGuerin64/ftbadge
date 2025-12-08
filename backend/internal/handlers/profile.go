@@ -111,18 +111,14 @@ func renderProfile(ctx context.Context, ftc *ftapi.Client, cc cache.CacheClient,
 	return data, nil
 }
 
-func setCacheHeaders(ctx echo.Context, data []byte) error {
+func generateETag(data []byte) string {
 	hash := md5.Sum([]byte(data)) // #nosec G401 -- ETag does not need to be cryptographically secure
-	etag := fmt.Sprintf("\"%x\"", hash)
-	clientETag := ctx.Request().Header.Get("If-None-Match")
+	return fmt.Sprintf("\"%x\"", hash)
+}
 
+func setCacheHeaders(ctx echo.Context, etag string) {
 	ctx.Response().Header().Add("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400")
 	ctx.Response().Header().Add("Etag", etag)
-
-	if clientETag == etag {
-		return ctx.NoContent(http.StatusNotModified)
-	}
-	return nil
 }
 
 func profileHandler(ctx echo.Context, cc cache.CacheClient) error {
@@ -147,11 +143,15 @@ func profileHandler(ctx echo.Context, cc cache.CacheClient) error {
 		}
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to render profile").SetInternal(err)
 	}
-	ctx.Response().Header().Add("Content-Type", "image/svg+xml")
 
-	if err := setCacheHeaders(ctx, data); err != nil {
-		return err
+	etag := generateETag(data)
+	clientETag := ctx.Request().Header.Get("If-None-Match")
+	setCacheHeaders(ctx, etag)
+	if clientETag == etag {
+		return ctx.NoContent(http.StatusNotModified)
 	}
+
+	ctx.Response().Header().Add("Content-Type", "image/svg+xml")
 	return ctx.XMLBlob(http.StatusOK, data)
 }
 
