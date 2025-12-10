@@ -91,7 +91,7 @@ const loginAlphanum = computed(() => !login.value || isAlphanum(login.value));
       </div>
 
       <div class="border-t border-gray-800 pt-4">
-        <Label class="text-sm text-gray-200">API URL</Label>
+        <h4 class="text-sm text-gray-200">API URL</h4>
         <div class="mt-2 rounded-md border border-gray-700 bg-gray-800 p-3">
           <code class="text-sm break-all text-green-400">{{
             props.apiUrl
