@@ -1,2 +1,0 @@
-/*
-  Content-Security-Policy: default-src 'self'; connect-src 'self' https://ftbadge.cc https://*.ftbadge.cc; script-src 'self'; style-src 'self'; img-src 'self' data: blob: https://ftbadge.cc https://*.ftbadge.cc; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;
