@@ -32,7 +32,9 @@ backend-security-gosec:
         - .gitlab-ci.yml
   needs:
     - go_mod_download
-  image: securego/gosec:2.22.11
+  image:
+    name: securego/gosec:2.22.11
+    entrypoint: [""]
   before_script:
     - cd backend
   script:
