@@ -55,6 +55,6 @@ backend-security-govulncheck:
     - cd backend
     - go install golang.org/x/vuln/cmd/govulncheck@latest
   script:
-    - govulncheck ./...
+    - $GOPATH/bin/govulncheck ./...
   cache:
     policy: pull
