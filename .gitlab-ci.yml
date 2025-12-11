@@ -3,7 +3,7 @@ stages:
   - security
 
 variables:
-  GOPATH: ${CI_PROJECT_DIR}/backend/.go
+  GOPATH: ${CI_PROJECT_DIR}/.go
 
 .go-cache:
   image: golang:1.25
