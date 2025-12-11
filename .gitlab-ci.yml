@@ -1,0 +1,41 @@
+stages:
+  - prepare
+  - security
+
+variables:
+  GOPATH: ${CI_PROJECT_DIR}/backend/.go
+
+.go-cache:
+  image: golang:1.25
+  cache:
+    key:
+      files:
+        - backend/go.sum
+    paths:
+      - .go/pkg/mod/
+
+go_mod_download:
+  extends: .go-cache
+  stage: prepare
+  before_script:
+    - mkdir -p .go
+    - cd backend
+  script:
+    - go mod download
+
+backend-security-gosec:
+  extends: .go-cache
+  stage: security
+  rules:
+    - changes:
+        - backend/**/*
+        - .gitlab-ci.yml
+  needs:
+    - go_mod_download
+  image: securego/gosec:2.22.11
+  before_script:
+    - cd backend
+  script:
+    - gosec ./...
+  cache:
+    policy: pull
