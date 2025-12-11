@@ -41,3 +41,20 @@ backend-security-gosec:
     - gosec ./...
   cache:
     policy: pull
+
+backend-security-govulncheck:
+  extends: .go-cache
+  stage: security
+  rules:
+    - changes:
+        - backend/**/*
+        - .gitlab-ci.yml
+  needs:
+    - go_mod_download
+  before_script:
+    - cd backend
+    - go install golang.org/x/vuln/cmd/govulncheck@latest
+  script:
+    - govulncheck ./...
+  cache:
+    policy: pull
