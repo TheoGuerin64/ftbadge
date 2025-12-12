@@ -68,4 +68,4 @@ backend-deploy:
   before_script:
     - cd backend
   script:
-    - railway up --service=$RAILWAY_SERVICE_ID
+    - railway up --ci --service=$RAILWAY_SERVICE_ID
