@@ -1,5 +1,4 @@
 stages:
-  - prepare
   - security
 
 variables:
@@ -16,7 +15,7 @@ variables:
 
 go_mod_download:
   extends: .go-cache
-  stage: prepare
+  stage: .pre
   before_script:
     - mkdir -p .go
     - cd backend
