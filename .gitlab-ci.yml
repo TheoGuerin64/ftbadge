@@ -6,6 +6,7 @@ workflow:
 
 stages:
   - security
+  - deploy
 
 variables:
   GOPATH: ${CI_PROJECT_DIR}/.go
@@ -55,3 +56,16 @@ backend-security-govulncheck:
     - $GOPATH/bin/govulncheck ./...
   cache:
     policy: pull
+
+backend-deploy:
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  needs:
+    - backend-security-gosec
+    - backend-security-govulncheck
+  image: ghcr.io/railwayapp/cli:latest
+  before_script:
+    - cd backend
+  script:
+    - railway up --service=$RAILWAY_SERVICE_ID
