@@ -1,3 +1,9 @@
+workflow:
+  rules:
+    - changes:
+        - backend/**/*
+        - .gitlab-ci.yml
+
 stages:
   - security
 
@@ -25,10 +31,6 @@ go_mod_download:
 backend-security-gosec:
   extends: .go-cache
   stage: security
-  rules:
-    - changes:
-        - backend/**/*
-        - .gitlab-ci.yml
   needs:
     - go_mod_download
   image:
@@ -44,10 +46,6 @@ backend-security-gosec:
 backend-security-govulncheck:
   extends: .go-cache
   stage: security
-  rules:
-    - changes:
-        - backend/**/*
-        - .gitlab-ci.yml
   needs:
     - go_mod_download
   before_script:
