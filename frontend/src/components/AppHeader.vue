@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GitHubIcon } from "vue3-simple-icons";
+import { GitLabIcon } from "vue3-simple-icons";
 
 import { Button } from "~/components/ui/button";
 </script>
@@ -30,8 +30,8 @@ import { Button } from "~/components/ui/button";
         class="text-gray-400 hover:bg-gray-700 hover:text-white"
         as-child
       >
-        <a href="https://github.com/TheoGuerin64/ftbadge" target="_blank">
-          <GitHubIcon :size="20" />
+        <a href="https://gitlab.com/theo-guerin/ftbadge" target="_blank">
+          <GitLabIcon :size="20" />
         </a>
       </Button>
     </div>
