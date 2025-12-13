@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 
+import AppFooter from "~/components/AppFooter.vue";
+import AppHeader from "~/components/AppHeader.vue";
 import ConfigurationCard from "~/components/ConfigurationCard.vue";
-import HomeFooter from "~/components/HomeFooter.vue";
-import HomeHeader from "~/components/HomeHeader.vue";
 import PreviewCard from "~/components/PreviewCard.vue";
 import SnippetCard from "~/components/SnippetCard.vue";
 
@@ -19,7 +19,7 @@ const apiUrl = computed<string>(() => {
 <template>
   <div class="bg-gray-950">
     <div class="min-h-screen">
-      <HomeHeader />
+      <AppHeader />
 
       <main class="mx-auto max-w-6xl px-4 py-8">
         <div class="mb-12 text-center">
@@ -51,6 +51,6 @@ const apiUrl = computed<string>(() => {
       </main>
     </div>
 
-    <HomeFooter />
+    <AppFooter />
   </div>
 </template>
