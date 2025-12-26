@@ -22,7 +22,7 @@ func main() {
 	e.Validator = ftvalidator.New()
 
 	e.Use(middleware.Recover())
-	e.Use(middleware.Logger())
+	e.Use(middleware.RequestLogger())
 	e.Use(middleware.Gzip())
 
 	e.GET("/profile/:login", handlers.GetProfileHandler(localClient))
