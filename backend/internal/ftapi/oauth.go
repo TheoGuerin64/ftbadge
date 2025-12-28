@@ -41,7 +41,7 @@ func (c *Client) GetAccessToken(ctx context.Context, cm *cache.CacheManager) (st
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("unexpected reponse status from token endpoint: %d %s", resp.StatusCode, resp.Status)
+		return "", fmt.Errorf("unexpected response status from token endpoint: %d %s", resp.StatusCode, resp.Status)
 	}
 
 	var tokenResp oauthTokenResponse
