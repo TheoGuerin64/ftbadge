@@ -7,6 +7,7 @@ require (
 	github.com/go-playground/validator/v10 v10.30.1
 	github.com/labstack/echo/v4 v4.14.0
 	github.com/redis/go-redis/v9 v9.17.2
+	golang.org/x/time v0.14.0
 )
 
 require (
@@ -26,5 +27,4 @@ require (
 	golang.org/x/net v0.48.0 // indirect
 	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
-	golang.org/x/time v0.14.0 // indirect
 )
