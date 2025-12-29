@@ -6,6 +6,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/getsentry/sentry-go"
+	sentryecho "github.com/getsentry/sentry-go/echo"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog"
@@ -14,9 +16,19 @@ import (
 	"ftbadge/internal/cache"
 	"ftbadge/internal/ftvalidator"
 	"ftbadge/internal/handlers"
+	"ftbadge/internal/utils"
 )
 
 func main() {
+	sentryDSN := utils.MustGetEnv("SENTRY_DSN")
+
+	sentryConfig := sentry.ClientOptions{
+		Dsn: sentryDSN,
+	}
+	if err := sentry.Init(sentryConfig); err != nil {
+		log.Fatalf("sentry initialization failed: %v", err)
+	}
+
 	localClient, err := cache.NewLocalClient()
 	if err != nil {
 		log.Fatalf("failed to setup Redis client: %v", err)
@@ -55,9 +67,13 @@ func main() {
 			return nil
 		},
 	}
+	sentryEchoConfig := sentryecho.Options{
+		Repanic: true,
+	}
 
-	e.Use(middleware.Recover())
 	e.Use(middleware.RequestLoggerWithConfig(requestLoggerConfig))
+	e.Use(middleware.Recover())
+	e.Use(sentryecho.New(sentryEchoConfig))
 	e.Use(middleware.Gzip())
 
 	profileRateLimiterConfig := middleware.RateLimiterConfig{
