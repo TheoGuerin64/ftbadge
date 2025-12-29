@@ -25,6 +25,7 @@ func main() {
 	e.Use(middleware.RequestLogger())
 	e.Use(middleware.Gzip())
 
+	e.GET("/health", handlers.HealthCheckHandler)
 	e.GET("/profile/:login", handlers.GetProfileHandler(localClient))
 
 	e.Logger.Fatal(e.Start(":3000"))
