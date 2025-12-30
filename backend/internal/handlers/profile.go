@@ -7,6 +7,7 @@ import (
 	"math"
 	"net/http"
 	"net/url"
+	"strings"
 	"text/template"
 
 	"github.com/labstack/echo/v4"
@@ -46,7 +47,15 @@ const (
 )
 
 var (
-	profileTemplate = template.Must(template.New("profile").Parse(templates.Profile))
+	profileTemplate = template.Must(
+		template.New("profile").
+			Funcs(
+				template.FuncMap{
+					"ToUpper": strings.ToUpper,
+				},
+			).
+			Parse(templates.Profile),
+	)
 )
 
 func createProfile(user *ftapi.User, avatar string) *Profile {
@@ -61,7 +70,7 @@ func createProfile(user *ftapi.User, avatar string) *Profile {
 		Cursus:     user.Cursus,
 		Grade:      user.Grade,
 		Level:      level,
-		Experience: experience,
+		Experience: experience * 100,
 	}
 }
 
