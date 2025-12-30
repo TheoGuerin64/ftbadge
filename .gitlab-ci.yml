@@ -1,7 +1,7 @@
 workflow:
   rules:
     - changes:
-        - backend/**/*
+        - api/**/*
         - .gitlab-ci.yml
 
 stages:
@@ -16,7 +16,7 @@ variables:
   cache:
     key:
       files:
-        - backend/go.sum
+        - api/go.sum
     paths:
       - .go/pkg/mod/
 
@@ -25,11 +25,11 @@ go_mod_download:
   stage: .pre
   before_script:
     - mkdir -p .go
-    - cd backend
+    - cd api
   script:
     - go mod download
 
-backend-security-gosec:
+api-security-gosec:
   extends: .go-cache
   stage: security
   needs:
@@ -38,34 +38,34 @@ backend-security-gosec:
     name: securego/gosec:2.22.11
     entrypoint: [""]
   before_script:
-    - cd backend
+    - cd api
   script:
     - gosec ./...
   cache:
     policy: pull
 
-backend-security-govulncheck:
+api-security-govulncheck:
   extends: .go-cache
   stage: security
   needs:
     - go_mod_download
   before_script:
-    - cd backend
+    - cd api
     - go install golang.org/x/vuln/cmd/govulncheck@latest
   script:
     - $GOPATH/bin/govulncheck ./...
   cache:
     policy: pull
 
-backend-deploy:
+api-deploy:
   stage: deploy
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   needs:
-    - backend-security-gosec
-    - backend-security-govulncheck
+    - api-security-gosec
+    - api-security-govulncheck
   image: ghcr.io/railwayapp/cli:latest
   before_script:
-    - cd backend
+    - cd api
   script:
     - railway up --ci --service=$RAILWAY_SERVICE_ID
