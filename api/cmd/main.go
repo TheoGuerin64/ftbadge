@@ -44,7 +44,6 @@ func main() {
 			return ctx.Request().URL.Path == "/health" && ctx.Response().Status == http.StatusOK
 		},
 		LogRequestID: true,
-		LogRemoteIP:  true,
 		LogMethod:    true,
 		LogURI:       true,
 		LogUserAgent: true,
@@ -55,7 +54,6 @@ func main() {
 			logger.Info().
 				Time("start_time", v.StartTime).
 				Str("request_id", v.RequestID).
-				Str("remote_ip", v.RemoteIP).
 				Str("method", v.Method).
 				Str("uri", v.URI).
 				Str("user_agent", v.UserAgent).
