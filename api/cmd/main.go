@@ -20,6 +20,7 @@ import (
 )
 
 func main() {
+	port := utils.GetEnvWithDefault("PORT", "3000")
 	sentryDSN := utils.MustGetEnv("SENTRY_DSN")
 
 	sentryConfig := sentry.ClientOptions{
@@ -96,5 +97,5 @@ func main() {
 	e.GET("/health", handlers.HealthCheckHandler)
 	e.GET("/profile/:login", handlers.GetProfileHandler(localClient), middleware.RateLimiterWithConfig(profileRateLimiterConfig))
 
-	e.Logger.Fatal(e.Start(":3000"))
+	e.Logger.Fatal(e.Start(":" + port))
 }
