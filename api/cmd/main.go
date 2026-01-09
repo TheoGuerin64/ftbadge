@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/getsentry/sentry-go"
@@ -18,6 +19,21 @@ import (
 	"ftbadge/internal/handlers"
 	"ftbadge/internal/utils"
 )
+
+func rateLimiterIdentifierExtractor(ctx echo.Context) (string, error) {
+	id := ctx.RealIP()
+	return id, nil
+}
+
+func rateLimiterErrorHandler(ctx echo.Context, err error) error {
+	data := map[string]string{"error": "rate limit exceeded"}
+	return ctx.JSON(http.StatusForbidden, data)
+}
+
+func rateLimiterDenyHandler(ctx echo.Context, identifier string, err error) error {
+	data := map[string]string{"error": "rate limit exceeded"}
+	return ctx.JSON(http.StatusTooManyRequests, data)
+}
 
 func main() {
 	port := utils.GetEnvWithDefault("PORT", "3000")
@@ -66,11 +82,23 @@ func main() {
 			return nil
 		},
 	}
+	globalRateLimiterConfig := middleware.RateLimiterConfig{
+		Skipper: func(c echo.Context) bool {
+			return c.Request().URL.Path == "/health" || strings.HasPrefix(c.Request().URL.Path, "/profile")
+		},
+		Store: middleware.NewRateLimiterMemoryStoreWithConfig(
+			middleware.RateLimiterMemoryStoreConfig{Rate: rate.Limit(20), Burst: 30, ExpiresIn: 3 * time.Minute},
+		),
+		IdentifierExtractor: rateLimiterIdentifierExtractor,
+		ErrorHandler:        rateLimiterErrorHandler,
+		DenyHandler:         rateLimiterDenyHandler,
+	}
 	sentryEchoConfig := sentryecho.Options{
 		Repanic: true,
 	}
 
 	e.Use(middleware.RequestLoggerWithConfig(requestLoggerConfig))
+	e.Use(middleware.RateLimiterWithConfig(globalRateLimiterConfig))
 	e.Use(middleware.Recover())
 	e.Use(sentryecho.New(sentryEchoConfig))
 	e.Use(middleware.Gzip())
@@ -78,20 +106,11 @@ func main() {
 	profileRateLimiterConfig := middleware.RateLimiterConfig{
 		Skipper: middleware.DefaultSkipper,
 		Store: middleware.NewRateLimiterMemoryStoreWithConfig(
-			middleware.RateLimiterMemoryStoreConfig{Rate: rate.Limit(10.0 / 60.0), Burst: 20, ExpiresIn: 3 * time.Minute},
+			middleware.RateLimiterMemoryStoreConfig{Rate: rate.Limit(1), Burst: 5, ExpiresIn: 3 * time.Minute},
 		),
-		IdentifierExtractor: func(ctx echo.Context) (string, error) {
-			id := ctx.RealIP()
-			return id, nil
-		},
-		ErrorHandler: func(ctx echo.Context, err error) error {
-			data := map[string]string{"error": "rate limit exceeded"}
-			return ctx.JSON(http.StatusForbidden, data)
-		},
-		DenyHandler: func(ctx echo.Context, identifier string, err error) error {
-			data := map[string]string{"error": "rate limit exceeded"}
-			return ctx.JSON(http.StatusTooManyRequests, data)
-		},
+		IdentifierExtractor: rateLimiterIdentifierExtractor,
+		ErrorHandler:        rateLimiterErrorHandler,
+		DenyHandler:         rateLimiterDenyHandler,
 	}
 
 	e.GET("/health", handlers.HealthCheckHandler)
