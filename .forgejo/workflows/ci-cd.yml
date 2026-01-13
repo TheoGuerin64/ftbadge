@@ -1,0 +1,86 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+      - '.forgejo/workflows/ci-cd.yml'
+
+jobs:
+  api-security-gosec:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: api
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25'
+
+      - name: Install dependencies
+        run: |
+          go mod download
+          go install github.com/securego/gosec/v2/cmd/gosec@latest
+
+      - name: Run gosec
+        run: |
+          gosec ./...
+
+  api-security-govulncheck:
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: api
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25'
+
+      - name: Install dependencies
+        run: |
+          go mod download
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: Run govulncheck
+        run: |
+          govulncheck ./...
+
+  api-deploy:
+    needs: [api-security-gosec, api-security-govulncheck]
+    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: api
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install Railway CLI
+        run: |
+          npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          railway up --ci --service="${{ secrets.RAILWAY_SERVICE_ID }}"
