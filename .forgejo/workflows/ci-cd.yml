@@ -9,7 +9,7 @@ on:
 
 jobs:
   api-security-gosec:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: api
@@ -34,7 +34,7 @@ jobs:
           gosec ./...
 
   api-security-govulncheck:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: api
@@ -60,7 +60,7 @@ jobs:
 
   api-deploy:
     needs: [api-security-gosec, api-security-govulncheck]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: api
