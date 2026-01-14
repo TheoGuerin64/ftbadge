@@ -6,7 +6,7 @@ on:
     paths:
       - 'api/**'
       - '.forgejo/workflows/ci-cd.yml'
-    workflow_dispatch:
+  workflow_dispatch:
 
 env:
   GO_VERSION: "1.25"
