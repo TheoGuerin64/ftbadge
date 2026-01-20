@@ -64,7 +64,11 @@ jobs:
 
   api-deploy:
     needs: [api-security-gosec, api-security-govulncheck]
-    runs-on: ubuntu-latest
+    runs-on: docker
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      RAILWAY_TOKEN: "${{ secrets.RAILWAY_TOKEN }}"
+      RAILWAY_SERVICE_ID: "${{ secrets.RAILWAY_SERVICE_ID }}"
     defaults:
       run:
         working-directory: api
@@ -74,17 +78,6 @@ jobs:
         with:
           sparse-checkout: api
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-
-      - name: Install Railway CLI
-        run: |
-          npm install -g @railway/cli
-
       - name: Deploy to Railway
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
-          railway up --ci --service="${{ secrets.RAILWAY_SERVICE_ID }}"
+          railway up --ci --service="${{ env.RAILWAY_SERVICE_ID }}"
