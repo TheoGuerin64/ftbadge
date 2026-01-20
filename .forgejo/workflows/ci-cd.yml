@@ -64,7 +64,7 @@ jobs:
 
   api-deploy:
     needs: [api-security-gosec, api-security-govulncheck]
-    runs-on: docker
+    runs-on: ubuntu-latest
     container: ghcr.io/railwayapp/cli:latest
     env:
       RAILWAY_TOKEN: "${{ secrets.RAILWAY_TOKEN }}"
