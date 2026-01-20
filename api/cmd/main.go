@@ -49,7 +49,7 @@ func main() {
 
 	localClient, err := cache.NewLocalClient()
 	if err != nil {
-		log.Fatalf("failed to setup Redis client: %v", err)
+		log.Fatalf("failed to setup cache client: %v", err)
 	}
 
 	ftc := ftapi.NewClient(

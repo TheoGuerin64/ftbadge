@@ -64,14 +64,14 @@ func NewCacheManager(ctx context.Context, client CacheClient, id string) (*Cache
 func (cm *CacheManager) PreFetch(ctx context.Context, group CacheGroup) error {
 	keys, exists := preFetchGroups[group]
 	if !exists {
-		panic(fmt.Sprintf("pre-fetch group %q does not exist", group))
+		return fmt.Errorf("pre-fetch group %d does not exist", group)
 	}
 
 	cacheKeys := make([]string, 0, len(keys))
 	for _, key := range keys {
 		cacheKeyGenerator, exists := cacheKeyGenerators[key]
 		if !exists {
-			panic(fmt.Sprintf("cache key %q does not have a corresponding generator function", key))
+			return fmt.Errorf("cache key %d does not have a corresponding generator function", key)
 		}
 		cacheKeys = append(cacheKeys, cacheKeyGenerator(cm.id))
 	}
@@ -105,23 +105,23 @@ func (cm *CacheManager) Get(cacheKey CacheKey) (string, bool) {
 	return value, exists
 }
 
-func (cm *CacheManager) Set(cacheKey CacheKey, value string) {
+func (cm *CacheManager) Set(cacheKey CacheKey, value string) error {
 	ttl, exists := cacheKeyTTL[cacheKey]
 	if !exists {
-		panic(fmt.Sprintf("cache key %q does not have a default TTL", cacheKey))
+		return fmt.Errorf("cache key %d does not have a default TTL", cacheKey)
 	}
 
-	cm.SetWithTTL(cacheKey, value, ttl)
+	return cm.SetWithTTL(cacheKey, value, ttl)
 }
 
-func (cm *CacheManager) SetWithTTL(cacheKey CacheKey, value string, ttl time.Duration) {
+func (cm *CacheManager) SetWithTTL(cacheKey CacheKey, value string, ttl time.Duration) error {
 	if cm.pending == nil {
-		cm.pending = make([]CacheEntry, len(CacheKeys))
+		cm.pending = make([]CacheEntry, 0, len(CacheKeys))
 	}
 
 	cacheKeyGenerator, exists := cacheKeyGenerators[cacheKey]
 	if !exists {
-		panic(fmt.Sprintf("cache key %q does not have a corresponding generator function", cacheKey))
+		return fmt.Errorf("cache key %d does not have a corresponding generator function", cacheKey)
 	}
 	key := cacheKeyGenerator(cm.id)
 
@@ -131,6 +131,7 @@ func (cm *CacheManager) SetWithTTL(cacheKey CacheKey, value string, ttl time.Dur
 		TTL:   ttl,
 	}
 	cm.pending = append(cm.pending, entry)
+	return nil
 }
 
 func (cm *CacheManager) Flush(ctx context.Context) error {
