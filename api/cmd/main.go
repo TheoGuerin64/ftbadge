@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
 	"time"
 
@@ -122,5 +124,20 @@ func main() {
 	e.GET("/health", handlers.HealthCheckHandler)
 	e.GET("/profile/:login", handlers.GetProfileHandler(ftc, localClient), middleware.RateLimiterWithConfig(profileRateLimiterConfig))
 
-	e.Logger.Fatal(e.Start(":" + port))
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
+	go func() {
+		if err := e.Start(":" + port); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatal(err)
+		}
+	}()
+	<-ctx.Done()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
+	}
 }
