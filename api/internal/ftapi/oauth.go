@@ -51,7 +51,9 @@ func (c *Client) GetAccessToken(ctx context.Context, cm *cache.CacheManager) (st
 
 	accessToken := tokenResp.AccessToken
 	ttl := time.Duration(tokenResp.ExpiresIn) * time.Second
-	cm.SetWithTTL(cache.CacheKeyAccessToken, accessToken, ttl)
+	if err := cm.SetWithTTL(cache.CacheKeyAccessToken, accessToken, ttl); err != nil {
+		return "", fmt.Errorf("failed to cache access token: %w", err)
+	}
 
 	return accessToken, nil
 }

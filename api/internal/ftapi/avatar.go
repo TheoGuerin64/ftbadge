@@ -33,7 +33,9 @@ func (c *Client) GetAvatar(ctx context.Context, cm *cache.CacheManager, endpoint
 		return "", fmt.Errorf("failed to convert JPEG bytes to base64 data URI from endpoint %q: %w", endpoint, err)
 	}
 
-	cm.Set(cache.CacheKeyAvatar, base64Image)
+	if err := cm.Set(cache.CacheKeyAvatar, base64Image); err != nil {
+		return "", fmt.Errorf("failed to cache avatar: %w", err)
+	}
 
 	return base64Image, nil
 }

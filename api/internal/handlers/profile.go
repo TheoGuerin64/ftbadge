@@ -112,7 +112,9 @@ func renderProfile(ctx context.Context, ftc *ftapi.Client, cc cache.CacheClient,
 		return nil, fmt.Errorf("failed to render profile template: %w", err)
 	}
 
-	cm.Set(cache.CacheKeyProfile, string(data))
+	if err := cm.Set(cache.CacheKeyProfile, string(data)); err != nil {
+		return nil, fmt.Errorf("failed to cache profile: %w", err)
+	}
 	if err := cm.Flush(ctx); err != nil {
 		return nil, fmt.Errorf("failed to flush cache: %w", err)
 	}
