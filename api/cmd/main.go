@@ -15,6 +15,7 @@ import (
 	"golang.org/x/time/rate"
 
 	"ftbadge/internal/cache"
+	"ftbadge/internal/ftapi"
 	"ftbadge/internal/ftvalidator"
 	"ftbadge/internal/handlers"
 	"ftbadge/internal/utils"
@@ -50,6 +51,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to setup Redis client: %v", err)
 	}
+
+	ftc := ftapi.NewClient(
+		"https://api.intra.42.fr/v2",
+		"https://cdn.intra.42.fr",
+	)
 
 	e := echo.New()
 	e.HideBanner = true
@@ -114,7 +120,7 @@ func main() {
 	}
 
 	e.GET("/health", handlers.HealthCheckHandler)
-	e.GET("/profile/:login", handlers.GetProfileHandler(localClient), middleware.RateLimiterWithConfig(profileRateLimiterConfig))
+	e.GET("/profile/:login", handlers.GetProfileHandler(ftc, localClient), middleware.RateLimiterWithConfig(profileRateLimiterConfig))
 
 	e.Logger.Fatal(e.Start(":" + port))
 }

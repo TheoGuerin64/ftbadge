@@ -41,11 +41,6 @@ type profileParam struct {
 	Login string `param:"login" validate:"required,alphanum,max=32"`
 }
 
-const (
-	apiBaseURL = "https://api.intra.42.fr/v2"
-	cdnBaseURL = "https://cdn.intra.42.fr"
-)
-
 var (
 	profileTemplate = template.Must(
 		template.New("profile").
@@ -132,7 +127,7 @@ func setCacheHeaders(ctx echo.Context, etag string) {
 	ctx.Response().Header().Add("Etag", etag)
 }
 
-func profileHandler(ctx echo.Context, cc cache.CacheClient) error {
+func profileHandler(ctx echo.Context, ftc *ftapi.Client, cc cache.CacheClient) error {
 	ctx.Response().Header().Add("Access-Control-Allow-Origin", "*")
 
 	param := profileParam{}
@@ -146,7 +141,6 @@ func profileHandler(ctx echo.Context, cc cache.CacheClient) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "Invalid login: 'graph' is not allowed")
 	}
 
-	ftc := ftapi.NewClient(apiBaseURL, cdnBaseURL)
 	data, err := renderProfile(ctx.Request().Context(), ftc, cc, param.Login)
 	if err != nil {
 		if _, ok := err.(*UserNotFoundError); ok {
@@ -166,8 +160,8 @@ func profileHandler(ctx echo.Context, cc cache.CacheClient) error {
 	return ctx.XMLBlob(http.StatusOK, data)
 }
 
-func GetProfileHandler(cc cache.CacheClient) echo.HandlerFunc {
+func GetProfileHandler(ftc *ftapi.Client, cc cache.CacheClient) echo.HandlerFunc {
 	return func(ctx echo.Context) error {
-		return profileHandler(ctx, cc)
+		return profileHandler(ctx, ftc, cc)
 	}
 }
