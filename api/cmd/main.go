@@ -105,6 +105,7 @@ func main() {
 		Repanic: true,
 	}
 
+	e.Use(middleware.RequestID())
 	e.Use(middleware.RequestLoggerWithConfig(requestLoggerConfig))
 	e.Use(middleware.RateLimiterWithConfig(globalRateLimiterConfig))
 	e.Use(middleware.Recover())
