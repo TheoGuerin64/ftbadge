@@ -6,16 +6,14 @@ Dynamic 42 Profile Badge.
 
 https://demo.ftbadge.cc
 
-## Live Exemple
+## Live Example
 
 <a href="https://demo.ftbadge.cc"><img src="https://ftbadge.cc/profile/test" width="425" height="175"></a>
 
-## Contributing
+## Mirror & CI
 
-Contributions are welcome! Whether it’s…
+This repository is hosted on Codeberg as the primary source.
+A read-only mirror exists on GitHub and is used only for CI runs:
+https://github.com/TheoGuerin64/ftbadge
 
-- New SVG badge styles
-- Bug reports or feature requests (please open an issue)
-- Pull requests with enhancements or fixes
-
-…feel free to fork the repo and submit a PR.
+Please open issues and pull requests on Codeberg.
