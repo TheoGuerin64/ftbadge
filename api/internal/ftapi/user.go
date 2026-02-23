@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"ftbadge/internal/cache"
 	"ftbadge/internal/utils"
@@ -72,7 +73,12 @@ func (c *Client) GetUser(ctx context.Context, cm *cache.CacheManager, login stri
 	headers.Set("Accept-Encoding", "gzip")
 	headers.Set("Authorization", "Bearer "+accessToken)
 
-	resp, err := c.Get(ctx, "/users/"+login, headers)
+	endpoint, err := url.JoinPath("/users", url.PathEscape(login))
+	if err != nil {
+		return nil, fmt.Errorf("failed to construct user endpoint: %w", err)
+	}
+
+	resp, err := c.get(ctx, endpoint, headers)
 	if err != nil {
 		return nil, fmt.Errorf("failed to send user request: %w", err)
 	}

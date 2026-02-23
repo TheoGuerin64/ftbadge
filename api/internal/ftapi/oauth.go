@@ -13,6 +13,7 @@ import (
 )
 
 type oauthTokenResponse struct {
+	// #nosec G117 -- Not a hardcoded secret, used for JSON unmarshaling
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int    `json:"expires_in"`
 }
@@ -34,7 +35,7 @@ func (c *Client) GetAccessToken(ctx context.Context, cm *cache.CacheManager) (st
 	data.Set("client_id", clientID)
 	data.Set("client_secret", clientSecret)
 
-	resp, err := c.PostForm(ctx, "/oauth/token", nil, data)
+	resp, err := c.postForm(ctx, "/oauth/token", nil, data)
 	if err != nil {
 		return "", fmt.Errorf("failed to send token request: %w", err)
 	}

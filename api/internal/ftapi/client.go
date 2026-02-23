@@ -38,6 +38,7 @@ func (c *Client) fetchAndDecodeImage(ctx context.Context, endpoint string) (imag
 		return nil, fmt.Errorf("unable to create HTTP GET request for URL %q: %w", fullURL, err)
 	}
 
+	// #nosec G704 -- safe because host is locked to base URL and path is controlled by application
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute HTTP GET request for URL %q: %w", fullURL, err)
@@ -56,7 +57,7 @@ func (c *Client) fetchAndDecodeImage(ctx context.Context, endpoint string) (imag
 	return img, nil
 }
 
-func (c *Client) Get(ctx context.Context, endpoint string, headers http.Header) (*http.Response, error) {
+func (c *Client) get(ctx context.Context, endpoint string, headers http.Header) (*http.Response, error) {
 	fullURL, err := url.JoinPath(c.apiBaseURL, endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct URL from base %q and endpoint %q: %w", c.apiBaseURL, endpoint, err)
@@ -73,6 +74,7 @@ func (c *Client) Get(ctx context.Context, endpoint string, headers http.Header) 
 		}
 	}
 
+	// #nosec G704 -- safe because host is locked to base URL and path is controlled by application
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute HTTP GET request for URL %q: %w", fullURL, err)
@@ -81,7 +83,7 @@ func (c *Client) Get(ctx context.Context, endpoint string, headers http.Header) 
 	return resp, nil
 }
 
-func (c *Client) PostForm(ctx context.Context, endpoint string, headers http.Header, data url.Values) (*http.Response, error) {
+func (c *Client) postForm(ctx context.Context, endpoint string, headers http.Header, data url.Values) (*http.Response, error) {
 	fullURL, err := url.JoinPath(c.apiBaseURL, endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("failed to construct URL from base %q and endpoint %q: %w", c.apiBaseURL, endpoint, err)
@@ -100,6 +102,7 @@ func (c *Client) PostForm(ctx context.Context, endpoint string, headers http.Hea
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
+	// #nosec G704 -- safe because host is locked to base URL and path is controlled by application
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute HTTP POST request for URL %q: %w", fullURL, err)
