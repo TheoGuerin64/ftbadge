@@ -1,14 +1,14 @@
 module ftbadge
 
-go 1.25.6
+go 1.26.0
 
 require (
 	github.com/dgraph-io/ristretto/v2 v2.4.0
 	github.com/getsentry/sentry-go v0.42.0
 	github.com/getsentry/sentry-go/echo v0.42.0
 	github.com/go-playground/validator/v10 v10.30.1
-	github.com/labstack/echo/v4 v4.15.0
-	github.com/redis/go-redis/v9 v9.17.3
+	github.com/labstack/echo/v4 v4.15.1
+	github.com/redis/go-redis/v9 v9.18.0
 	github.com/rs/zerolog v1.34.0
 	golang.org/x/time v0.14.0
 )
@@ -26,8 +26,9 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	golang.org/x/crypto v0.47.0 // indirect
-	golang.org/x/net v0.49.0 // indirect
-	golang.org/x/sys v0.40.0 // indirect
-	golang.org/x/text v0.33.0 // indirect
+	go.uber.org/atomic v1.11.0 // indirect
+	golang.org/x/crypto v0.48.0 // indirect
+	golang.org/x/net v0.50.0 // indirect
+	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/text v0.34.0 // indirect
 )
